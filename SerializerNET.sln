@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializerNET", "SerializerNET\SerializerNET.csproj", "{818FA2E3-688F-4983-B3F2-2FEB99365485}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManualTesting", "ManualTesting\ManualTesting.csproj", "{2C1F99E5-FD0E-4416-BF54-3ECE8D48CEB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{818FA2E3-688F-4983-B3F2-2FEB99365485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{818FA2E3-688F-4983-B3F2-2FEB99365485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{818FA2E3-688F-4983-B3F2-2FEB99365485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C1F99E5-FD0E-4416-BF54-3ECE8D48CEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C1F99E5-FD0E-4416-BF54-3ECE8D48CEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C1F99E5-FD0E-4416-BF54-3ECE8D48CEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C1F99E5-FD0E-4416-BF54-3ECE8D48CEB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
