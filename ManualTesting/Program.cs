@@ -1,4 +1,5 @@
-﻿using SerializerNET;
+﻿using System.Text.Json;
+using SerializerNET;
 
 var serializer = new Serializer();
 
@@ -6,7 +7,11 @@ int[] arr = new[] { 1, 2, 3, 4 };
 
 var person = new Person{};
 
-Console.WriteLine(serializer.Serialize(person));
+List<string> arr2 = new() { "Hello", "World" };
+
+var res = serializer.Serialize(arr);
+
+Console.WriteLine(res);
 
 class Person
 {

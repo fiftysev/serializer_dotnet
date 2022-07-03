@@ -22,8 +22,8 @@ public class Serializer
   private object GetSerializedData(object obj)
   {
     var type = obj.GetType();
-    if (type.IsArray) return SerializeArray(obj as Array ?? Array.Empty<string>());
-
+    if (!type.IsSerializable) throw new InvalidOperationException();
+    if (type.IsArray || (obj is IEnumerable && type.IsGenericType)) return SerializeArray(obj as IEnumerable ?? Array.Empty<string>());
     if (obj is IDictionary dictionary) return SerializeDict(dictionary);
 
     if (type.IsClass && obj is not string && !type.IsGenericType) return SerializeClass(obj);
@@ -33,7 +33,7 @@ public class Serializer
   }
 
 
-  private string SerializeArray(Array arr)
+  private string SerializeArray(IEnumerable arr)
   {
     List<string> formattedArr = new();
     foreach (var v in arr) formattedArr.Add($"{JsonValue(GetSerializedData(v))}");
