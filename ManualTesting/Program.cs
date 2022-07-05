@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text.Json;
-using SerializerNET;
+﻿using SerializerNET;
 
 var serializer = new Serializer();
 

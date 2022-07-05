@@ -1,29 +1,20 @@
 ﻿using System.Collections;
-using System.Dynamic;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace SerializerNET;
 
 public class Serializer
 {
-  public Serializer()
-  {
-  }
-
   public string Serialize(object obj)
   {
     return GetSerializedData(obj).ToString() ?? throw new InvalidOperationException();
   }
-
-  public object Deserialize<T>(string s)
+  
+  public object Deserialize(string s)
   {
-    Type castTo = typeof(T);
-    object obj = new();
-    var props = castTo.GetProperties();
-    GetDesearilizedData(s);
-    return obj;
+    if (s.StartsWith("{") && s.EndsWith("}")) return DeserializeKeyValue(s);
+    if (s.StartsWith("[") && s.EndsWith("]")) return DeserializeArray(s);
+    return DeserializePrimitive(s);
   }
 
   private object GetSerializedData(object obj)
@@ -37,26 +28,28 @@ public class Serializer
     return obj ?? "";
   }
 
-  private dynamic GetDesearilizedData(string s)
-  {
-    dynamic res = new ExpandoObject();
-
-    throw new NotImplementedException();
-  }
-
   private IEnumerable DeserializeArray(string s)
   {
-    throw new NotImplementedException();
+    var rawArray = s.Trim('[', ']').Split(",").ToList();
+    return (from string? v in rawArray select Serialize(v)).ToList();
   }
 
-  private IDictionary DeserializeDict(string s)
+  private object DeserializeKeyValue(string s)
   {
-    throw new NotImplementedException();
+    Hashtable res = new();
+    var rawDict = s.Trim('\n', '{', '}').Split(",").Where(v => !v.Equals("\"type\":\"class\""));
+    foreach (var pair in rawDict.Select(v => v.Split(':')))
+    {
+      res[pair[0]] = Serialize(pair[1]);
+    }
+    return res;
   }
 
-  private object DeserializeClass(string s)
+  private object DeserializePrimitive(string s)
   {
-    throw new NotImplementedException();
+    if (double.TryParse(s, out var num)) return num;
+    if (bool.TryParse(s, out var boolVar)) return boolVar;
+    return s.Trim('"');
   }
 
   private string SerializeArray(IEnumerable arr)
@@ -67,22 +60,22 @@ public class Serializer
 
   private string SerializeDict(IDictionary dictionary)
   {
-    List<string> formattedProps = 
-      (from DictionaryEntry v 
-        in dictionary 
+    List<string> formattedProps =
+      (from DictionaryEntry v
+          in dictionary
         select $"\"{ToSnakeCase(v.Key)}\": {JsonValue(GetSerializedData(v.Value ?? "undefined"))}").ToList();
     return $"{{{string.Join(",", formattedProps)}}}";
   }
 
   private string SerializeClass(object obj)
   {
-    var type = obj.GetType();
-    var properties = type.GetProperties();
-    var formattedProps = 
+    var properties = obj.GetType().GetProperties();
+    var formattedProps =
       properties
-        .Select(property => $"\"{ToSnakeCase(property.Name)}\":" + $"{JsonValue(GetSerializedData(property.GetValue(obj) ?? "undefined"))}")
+        .Select(property => $"\"{ToSnakeCase(property.Name)}\":" +
+                            $"{JsonValue(GetSerializedData(property.GetValue(obj) ?? "undefined"))}")
         .ToList();
-    return $"{{\"type\":\"{type.Name}\", {string.Join(", ", formattedProps)}}}";
+    return $"{{\"type\":\"class\", {string.Join(", ", formattedProps)}}}";
   }
 
   private static object JsonValue(object obj)
